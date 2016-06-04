@@ -37,13 +37,10 @@ angular.module('starter', ['ionic', 'ngCordova'])
 })
 
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+  console.log("Hellp");
   var options = {timeout: 10000, enableHighAccuracy: true};
- 
-  setInterval( function() { $cordovaGeolocation.getCurrentPosition(options).then(function(position){
-    var routeArray = [];
-    //Every iter push object with 
 
-
+ $cordovaGeolocation.getCurrentPosition(options).then(function(position){
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
  
     var mapOptions = {
@@ -62,21 +59,34 @@ angular.module('starter', ['ionic', 'ngCordova'])
         position: latLng
       });
 
-      var infoWindow = new google.maps.InfoWindow({
-        content: "Here I am!"
+    });
+
+  }, function(error){
+    console.log("Could not get initial location");
+  });
+  var routeArray = [];
+  setInterval( function() { $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+    //Every iter push object with
+
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+ 
+      var marker = new google.maps.Marker({
+        map: $scope.map,
+        animation: google.maps.Animation.DROP,
+        position: latLng
       });
-     
-      google.maps.event.addListener(marker, 'click', function () {
-        infoWindow.open($scope.map, marker);
-      });      
+
     });
     console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
 
-    routeArray.push({latitude:position.coords.latitude, longitude:position.coords.latitude, comment:""});
+    routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
     console.log(routeArray);
 
   }, function(error){
     console.log("Could not get location");
-  })}, 3000);
+
+  })}, 3000); 
 
 });
