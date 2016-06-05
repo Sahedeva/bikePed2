@@ -14,7 +14,7 @@ var replaceFiles = ['./www/js/app.js'];
 gulp.task('add-proxy', function() {
   return replace({
     regex: "https://arcane-beach-11863.herokuapp.com",
-    replacement: "http://localhost:8100",
+    replacement: "/srv",
     paths: replaceFiles,
     recursive: false,
     silent: false,
@@ -23,7 +23,7 @@ gulp.task('add-proxy', function() {
 
 gulp.task('remove-proxy', function() {
   return replace({
-    regex: "http://localhost:8100",
+    regex: "/srv",
     replacement: "https://arcane-beach-11863.herokuapp.com",
     paths: replaceFiles,
     recursive: false,
