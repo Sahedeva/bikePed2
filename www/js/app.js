@@ -27,7 +27,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
   $stateProvider
   .state('map', {
-    url: '/',
+    url: '/map',
     templateUrl: 'templates/map.html',
     controller: 'MapCtrl'
   })
