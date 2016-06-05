@@ -96,19 +96,24 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
   //Start button
   document.getElementById("routeButton").onclick=function() {toggleRoute()};
-
+  var trackingInterval;
   function toggleRoute()
   {
-    var trackingInterval;
     if (document.getElementById("routeButton").innerHTML == "Start Route")
     {
+      console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
       trackingInterval = setInterval( function() { trackingLoop() }, 3000);
     }
     else
     {
+      console.log("Stopping interval");
       document.getElementById("routeButton").innerHTML = "Start Route";
-      clearInterval(trackingInterval)
+      clearInterval(trackingInterval);
+
+
+
+      routeArray = [];
     }
   }
 
