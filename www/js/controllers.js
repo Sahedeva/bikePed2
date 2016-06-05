@@ -40,16 +40,22 @@ angular.module('starter-controllers', ['ionic', 'ngCordova'])
   };
 
   var _plotRoute = function(routeData) {
+    var polyLinePath = [];
     for(var i=0; i<routeData.length; ++i) {
       var elem = routeData[i];
-      /*
-      var marker = new google.maps.Marker({
-        map: $scope.map,
-        animation: google.maps.Animation.DROP,
-        position: elem
+      polyLinePath.push({
+        lat: elem.latitude,
+        lng: elem.longitude
       });
-      */
     }
+    var polyLine = new google.maps.Polyline({
+      path: polyLinePath,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+    polyLine.setMap($scope.map);
   }
 
   // Controller methods.
