@@ -1,6 +1,6 @@
 {
   "name": "bikePed2",
-  "app_id": "",
+  "app_id": "d73a151f",
   "gulpStartupTasks": [
     "sass",
     "watch"
@@ -10,9 +10,9 @@
     "!www/lib/**/*"
   ],
   "proxies": [
-   {
-     "path": "/srv",
-     "proxyUrl": "https://arcane-beach-11863.herokuapp.com/"
-   }
- ]
+    {
+      "path": "/srv",
+      "proxyUrl": "https://arcane-beach-11863.herokuapp.com/"
+    }
+  ]
 }

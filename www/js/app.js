@@ -84,6 +84,14 @@ angular.module('starter', ['ionic', 'ngCordova'])
         position: latLng
       });
 
+      var infoWindow = new google.maps.InfoWindow({
+      content: "Here I am!"
+  });
+ 
+  google.maps.event.addListener(marker, 'click', function () {
+      infoWindow.open($scope.map, marker);
+  });
+
     });
 
   }, function(error){
@@ -91,7 +99,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
   });
 
   var routeArray = [];
-
+  var counter = 0;
   function trackingLoop()
   {
     $cordovaGeolocation.getCurrentPosition(options).then(
@@ -106,12 +114,39 @@ angular.module('starter', ['ionic', 'ngCordova'])
             position: latLng
           });
 
-        });
-        console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
+          var infoWindow = new google.maps.InfoWindow({
+                content: "Here I am! Marker #"+counter
+            });
+            
+            
 
+            google.maps.event.addListener(marker, 'click', function () {
+                infoWindow.open($scope.map, marker);
+            });
+
+
+        });
+        
+
+        console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
         routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
         console.log(routeArray);
-
+        if (routeArray.length>1){
+          var pos1 = {lat:routeArray[counter-1]['latitude'], lng:routeArray[counter-1]['longitude']};
+          var pos2 = {lat:routeArray[counter]['latitude'], lng:routeArray[counter]['longitude']};;
+          var linePath = new google.maps.Polyline({
+            path: [
+              pos1,
+              pos2
+            ],
+            'strokeColor' : '#AA00FF',
+            'strokeOpacity' : 1.0,
+            'strokeWeight': 2,
+            'geodesic': false
+          });
+          linePath.setMap($scope.map);
+        }
+        counter++
       },
       function(error)
       {
@@ -129,7 +164,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
     {
       console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
-      trackingInterval = setInterval( function() { trackingLoop() }, 3000);
+      trackingInterval = setInterval( function() { trackingLoop() }, 10000);
     }
     else
     {
