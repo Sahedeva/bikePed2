@@ -36,7 +36,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
  
 })
 
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
@@ -104,6 +104,13 @@ angular.module('starter', ['ionic', 'ngCordova'])
       console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
       trackingInterval = setInterval( function() { trackingLoop() }, 3000);
+      $http.post('/srv/new', {
+     name: "steve",
+     email: "steve@example.com",
+     favorite: "run"
+   }).success(function(data) {
+     localStorage.setItem("userid", data);
+   })
     }
     else
     {
@@ -111,7 +118,15 @@ angular.module('starter', ['ionic', 'ngCordova'])
       document.getElementById("routeButton").innerHTML = "Start Route";
       clearInterval(trackingInterval);
 
-
+      var toSend={
+       userid: localStorage.getItem("userid"),
+       location: routeArray
+      };
+      $http.post('/srv/route', toSend).success(function(data){
+       console.log("Success");
+      }).error(function(err){
+       console.log("Error "+ err);
+      });
 
       routeArray = [];
     }

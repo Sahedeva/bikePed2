@@ -8,5 +8,11 @@
   "watchPatterns": [
     "www/**/*",
     "!www/lib/**/*"
-  ]
+  ],
+  "proxies": [
+   {
+     "path": "/srv",
+     "proxyUrl": "https://arcane-beach-11863.herokuapp.com/"
+   }
+ ]
 }
