@@ -148,7 +148,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
        userid: localStorage.getItem("userid"),
        location: routeArray
       };
-      $http.post('/srv/route', toSend).success(function(data){
+      $http.post(ApiEndpoint.url+'/route', toSend).success(function(data){
        console.log("Success");
        $location.path('/newUser');
       }).error(function(err){
