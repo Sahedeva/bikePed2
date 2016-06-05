@@ -23,6 +23,10 @@ angular.module('starter', ['ionic', 'ngCordova'])
   });
 })
 
+.constant('ApiEndpoint', {
+  url: 'https://arcane-beach-11863.herokuapp.com',
+})
+
 .config(function($stateProvider, $urlRouterProvider) {
 
   $stateProvider
@@ -41,12 +45,12 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
 })
 
-.controller('UserCtrl', function($scope, $state, $http, $location) {
+.controller('UserCtrl', function($scope, $state, $http, $location, ApiEndpoint) {
   $scope.name = "";
   $scope.email = "";
   $scope.favorite = "recw";
   $scope.newUser = function() {
-    $http.post('/srv/new', {
+    $http.post(ApiEndpoint.url + '/new', {
       name: $scope.name,
       email: $scope.email,
       favorite: $scope.favorite
@@ -58,7 +62,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
 })
 
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http, $location) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http, $location, ApiEndpoint) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
@@ -126,7 +130,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
       console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
       trackingInterval = setInterval( function() { trackingLoop() }, 3000);
-      $http.post('/srv/new', {
+      $http.post(ApiEndpoint.url + '/new', {
      name: "steve",
      email: "steve@example.com",
      favorite: "run"

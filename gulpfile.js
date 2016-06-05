@@ -7,6 +7,30 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 
+// `npm install --save replace`
+var replace = require('replace');
+var replaceFiles = ['./www/js/app.js'];
+
+gulp.task('add-proxy', function() {
+  return replace({
+    regex: "https://arcane-beach-11863.herokuapp.com",
+    replacement: "http://localhost:8100",
+    paths: replaceFiles,
+    recursive: false,
+    silent: false,
+  });
+})
+
+gulp.task('remove-proxy', function() {
+  return replace({
+    regex: "http://localhost:8100",
+    replacement: "https://arcane-beach-11863.herokuapp.com",
+    paths: replaceFiles,
+    recursive: false,
+    silent: false,
+  });
+})
+
 var paths = {
   sass: ['./scss/**/*.scss']
 };
