@@ -13,7 +13,19 @@ For example, to start a new Ionic project with the default tabs interface, make 
 $ npm install -g ionic
 ```
 
-Then run: 
+```bash
+$ npm update
+```
+
+```bash
+$ bower update
+```
+
+```bash
+$ ionic setup sass
+```
+
+Then run:
 
 ```bash
 $ ionic start myProject tabs

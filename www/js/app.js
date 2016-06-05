@@ -37,7 +37,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
     controller: 'UserCtrl'
   });
 
-  $urlRouterProvider.otherwise("/");
+  $urlRouterProvider.otherwise("/newUser");
 
 })
 
@@ -58,7 +58,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
 })
 
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http, $location) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
@@ -145,7 +145,8 @@ angular.module('starter', ['ionic', 'ngCordova'])
        location: routeArray
       };
       $http.post('/srv/route', toSend).success(function(data){
-       console.log("Success"); // !!! Redirect to user page.
+       console.log("Success");
+       $location.path('/newUser');
       }).error(function(err){
        console.log("Error "+ err);
       });
