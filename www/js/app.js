@@ -130,13 +130,6 @@ angular.module('starter', ['ionic', 'ngCordova'])
       console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
       trackingInterval = setInterval( function() { trackingLoop() }, 3000);
-      $http.post(ApiEndpoint.url + '/new', {
-     name: "steve",
-     email: "steve@example.com",
-     favorite: "run"
-   }).success(function(data) {
-     localStorage.setItem("userid", data);
-   })
     }
     else
     {
