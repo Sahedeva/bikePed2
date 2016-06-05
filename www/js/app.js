@@ -24,7 +24,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
 })
 
 .constant('ApiEndpoint', {
-  url: 'https://arcane-beach-11863.herokuapp.com',
+  url: '/srv',
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -77,18 +77,25 @@ angular.module('starter', ['ionic', 'ngCordova'])
   commentFormButton.id = "commentButton";
   commentFormButton.type = "submit";
   commentFormButton.value = "Submit";
+  var commentFormCounter = document.createElement("input");
+  commentFormCounter.id = "commentCounter";
+  commentFormCounter.type = "hidden";
 
+  var commentStringArray =[];
+  var counter = 0;
   var commentString="";
 
   commentFormButton.onclick=function() {setComment()};
   function setComment()
   {
     commentString = commentFormInput.value;
+    commentStringArray[commentFormCounter.value] = commentString;
     commentFormInput.value = "";
   }
 
   commentForm.appendChild(commentFormInput);
   commentForm.appendChild(commentFormButton);
+  commentForm.appendChild(commentFormCounter);
 
 
 
@@ -104,7 +111,6 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-    google.maps.event.addListener($scope.map, 'idle', function(){
 
       var marker = new google.maps.Marker({
         map: $scope.map,
@@ -112,21 +118,19 @@ angular.module('starter', ['ionic', 'ngCordova'])
         position: latLng
       });
 
-    });
 
   }, function(error){
     console.log("Could not get initial location");
   });
 
   var routeArray = [];
-  var counter = 0;
   function trackingLoop()
   {
     $cordovaGeolocation.getCurrentPosition(options).then(
       function(position)
       {
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+
 
           var marker = new google.maps.Marker({
             map: $scope.map,
@@ -142,12 +146,11 @@ angular.module('starter', ['ionic', 'ngCordova'])
             infoWindow.open($scope.map, marker);
           });
 
-        });
 
 
+        commentFormCounter.value = counter;
         console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
-        routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:commentString});
-        commentString = ""; //Reset comment string
+        routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
         console.log(routeArray);
         if (routeArray.length>1){
           var pos1 = {lat:routeArray[counter-1]['latitude'], lng:routeArray[counter-1]['longitude']};
@@ -176,19 +179,25 @@ angular.module('starter', ['ionic', 'ngCordova'])
   //Start button
   document.getElementById("routeButton").onclick=function() {toggleRoute()};
   var trackingInterval;
+  var routeLength = counter+1;
   function toggleRoute()
   {
     if (document.getElementById("routeButton").innerHTML == "Start Route")
     {
       console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
-      trackingInterval = setInterval( function() { trackingLoop() }, 10000);
+      trackingInterval = setInterval( function() { trackingLoop() }, 3000);
     }
-    else
+    else if (document.getElementById("routeButton").innerHTML == "Stop Route")
     {
       console.log("Stopping interval");
-      document.getElementById("routeButton").innerHTML = "Start Route";
+      document.getElementById("routeButton").innerHTML = "Update Route";
       clearInterval(trackingInterval);
+    }
+    else if (document.getElementById("routeButton").innerHTML == "Update Route")
+    {
+      for (let i=0; i<routeArray.length; i++)
+        routeArray[i]['comment'] = commentStringArray[i];
 
       var toSend={
         userid: localStorage.getItem("userid"),
@@ -201,8 +210,8 @@ angular.module('starter', ['ionic', 'ngCordova'])
         console.log("Error "+ err);
       });
 
-      routeArray = [];
     }
+
   }
 
 })
