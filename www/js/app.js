@@ -65,7 +65,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http, $location, ApiEndpoint) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
- $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
     var mapOptions = {
@@ -85,12 +85,12 @@ angular.module('starter', ['ionic', 'ngCordova'])
       });
 
       var infoWindow = new google.maps.InfoWindow({
-      content: "Here I am!"
-  });
- 
-  google.maps.event.addListener(marker, 'click', function () {
-      infoWindow.open($scope.map, marker);
-  });
+        content: "Here I am!"
+      });
+
+      google.maps.event.addListener(marker, 'click', function () {
+        infoWindow.open($scope.map, marker);
+      });
 
     });
 
@@ -115,18 +115,18 @@ angular.module('starter', ['ionic', 'ngCordova'])
           });
 
           var infoWindow = new google.maps.InfoWindow({
-                content: "Here I am! Marker #"+counter
-            });
-            
-            
+            content: "Here I am! Marker #"+counter
+          });
 
-            google.maps.event.addListener(marker, 'click', function () {
-                infoWindow.open($scope.map, marker);
-            });
+
+
+          google.maps.event.addListener(marker, 'click', function () {
+            infoWindow.open($scope.map, marker);
+          });
 
 
         });
-        
+
 
         console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
         routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
@@ -173,14 +173,14 @@ angular.module('starter', ['ionic', 'ngCordova'])
       clearInterval(trackingInterval);
 
       var toSend={
-       userid: localStorage.getItem("userid"),
-       location: routeArray
+        userid: localStorage.getItem("userid"),
+        location: routeArray
       };
       $http.post(ApiEndpoint.url+'/route', toSend).success(function(data){
-       console.log("Success");
-       $location.path('/newUser');
+        console.log("Success");
+        $location.path('/newUser');
       }).error(function(err){
-       console.log("Error "+ err);
+        console.log("Error "+ err);
       });
 
       routeArray = [];
