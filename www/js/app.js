@@ -65,6 +65,34 @@ angular.module('starter', ['ionic', 'ngCordova'])
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http, $location, ApiEndpoint) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
+
+  //Content Form Button
+  var commentForm = document.createElement("form");
+  commentForm.id = "commentForm";
+  var commentFormInput = document.createElement("input");
+  commentFormInput.id = "commentInput";
+  commentFormInput.type = "text";
+  commentFormInput.placeholder = "Add Comment";
+  var commentFormButton = document.createElement("input");
+  commentFormButton.id = "commentButton";
+  commentFormButton.type = "submit";
+  commentFormButton.value = "Submit";
+
+  var commentString="";
+
+  commentFormButton.onclick=function() {setComment()};
+  function setComment()
+  {
+    commentString = commentFormInput.value;
+    commentFormInput.value = "";
+  }
+
+  commentForm.appendChild(commentFormInput);
+  commentForm.appendChild(commentFormButton);
+
+
+
+
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
@@ -76,20 +104,12 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+    google.maps.event.addListener($scope.map, 'idle', function(){
 
       var marker = new google.maps.Marker({
         map: $scope.map,
         animation: google.maps.Animation.DROP,
         position: latLng
-      });
-
-      var infoWindow = new google.maps.InfoWindow({
-        content: "Here I am!"
-      });
-
-      google.maps.event.addListener(marker, 'click', function () {
-        infoWindow.open($scope.map, marker);
       });
 
     });
@@ -115,21 +135,19 @@ angular.module('starter', ['ionic', 'ngCordova'])
           });
 
           var infoWindow = new google.maps.InfoWindow({
-            content: "Here I am! Marker #"+counter
+            content: commentForm
           });
-
-
 
           google.maps.event.addListener(marker, 'click', function () {
             infoWindow.open($scope.map, marker);
           });
 
-
         });
 
 
         console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
-        routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
+        routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:commentString});
+        commentString = ""; //Reset comment string
         console.log(routeArray);
         if (routeArray.length>1){
           var pos1 = {lat:routeArray[counter-1]['latitude'], lng:routeArray[counter-1]['longitude']};
