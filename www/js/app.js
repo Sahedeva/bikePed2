@@ -100,7 +100,6 @@ angular.module('starter', ['ionic', 'ngCordova'])
   function toggleRoute()
   {
     var trackingInterval;
-    console.log("Hello");
     if (document.getElementById("routeButton").innerHTML == "Start Route")
     {
       document.getElementById("routeButton").innerHTML = "Stop Route";
