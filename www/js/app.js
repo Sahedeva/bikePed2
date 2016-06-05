@@ -24,16 +24,38 @@ angular.module('starter', ['ionic', 'ngCordova'])
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
- 
+
   $stateProvider
   .state('map', {
     url: '/',
     templateUrl: 'templates/map.html',
     controller: 'MapCtrl'
+  })
+  .state('newUser', {
+    url: '/newUser',
+    templateUrl: 'templates/newUser.html',
+    controller: 'UserCtrl'
   });
- 
+
   $urlRouterProvider.otherwise("/");
- 
+
+})
+
+.controller('UserCtrl', function($scope, $state, $http, $location) {
+  $scope.name = "";
+  $scope.email = "";
+  $scope.favorite = "recw";
+  $scope.newUser = function() {
+    $http.post('/srv/new', {
+      name: $scope.name,
+      email: $scope.email,
+      favorite: $scope.favorite
+    }).success(function(data) {
+      localStorage.setItem("userid", data);
+      $location.path('/map');
+    })
+  }
+
 })
 
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http) {
@@ -41,17 +63,17 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
- 
+
     var mapOptions = {
       center: latLng,
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
- 
+
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
     google.maps.event.addListenerOnce($scope.map, 'idle', function(){
- 
+
       var marker = new google.maps.Marker({
         map: $scope.map,
         animation: google.maps.Animation.DROP,
@@ -66,14 +88,14 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
   var routeArray = [];
 
-  function trackingLoop() 
+  function trackingLoop()
   {
     $cordovaGeolocation.getCurrentPosition(options).then(
       function(position)
       {
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         google.maps.event.addListenerOnce($scope.map, 'idle', function(){
-     
+
           var marker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
@@ -86,7 +108,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
         routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
         console.log(routeArray);
 
-      }, 
+      },
       function(error)
       {
         console.log("Could not get location");
@@ -123,7 +145,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
        location: routeArray
       };
       $http.post('/srv/route', toSend).success(function(data){
-       console.log("Success");
+       console.log("Success"); // !!! Redirect to user page.
       }).error(function(err){
        console.log("Error "+ err);
       });
@@ -132,4 +154,6 @@ angular.module('starter', ['ionic', 'ngCordova'])
     }
   }
 
-});
+})
+
+;
