@@ -56,6 +56,22 @@ angular.module('starter-controllers', ['ionic', 'ngCordova'])
       strokeWeight: 2
     });
     polyLine.setMap($scope.map);
+    _plotRouteMarkers(routeData);
+  }
+
+  var _plotRouteMarkers = function(routeData) {
+    for (var i=0; i<routeData.length; ++i) {
+      var elem = routeData[i];
+      if (elem.comment != null && elem.comment !== '') {
+        var loc = new google.maps.LatLng(elem.latitude, elem.longitude);
+        var marker = new google.maps.Marker({
+          map: $scope.map,
+          animation: google.maps.Animation.DROP,
+          position: loc,
+          title: elem.comment
+        });
+      }
+    }
   }
 
   // Controller methods.
@@ -71,29 +87,11 @@ angular.module('starter-controllers', ['ionic', 'ngCordova'])
 
     var mapOptions = {
       center: latLng,
-      zoom: 15,
+      zoom: 16,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
-
-      var marker = new google.maps.Marker({
-        map: $scope.map,
-        animation: google.maps.Animation.DROP,
-        position: latLng
-      });
-
-      var infoWindow = new google.maps.InfoWindow({
-        content: "Here I am!"
-      });
-
-      google.maps.event.addListener(marker, 'click', function () {
-        infoWindow.open($scope.map, marker);
-      });
-
-    });
 
   }, function(error){
     console.log("Could not get initial location");
