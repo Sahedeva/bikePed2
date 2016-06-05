@@ -21,22 +21,42 @@ angular.module('starter-controllers', ['ionic', 'ngCordova'])
   // functions that should be in a services object:
   var _getAllRoutes = function() {
     $scope.routes = null;
-    $http.get(ApiEndpoint.url + '/routes', function(data) {
+    $http.get(ApiEndpoint.url + '/routes').success(function(data) {
       $scope.routes = data;
     });
   };
-  var _getRoute = function(routeId) {
+  var _getRoute = function(routeId, next) {
     $scope.route = null;
-    $http.get(ApiEndpoint.url + '/route/'+routeId, function(data) {
+    $http.get(ApiEndpoint.url + '/route/'+routeId).success(function(data) {
       $scope.route = data;
+      next(data.location);
     });
   };
   var _getRoutesForUser = function(userId) {
     $scope.routes = null;
-    $http.get(ApiEndpoint.url + '/routes/'+userId, function(data) {
+    $http.get(ApiEndpoint.url + '/routes/'+userId).success(function(data) {
       $scope.routes = data;
     });
   };
+
+  var _plotRoute = function(routeData) {
+    for(var i=0; i<routeData.length; ++i) {
+      var elem = routeData[i];
+      /*
+      var marker = new google.maps.Marker({
+        map: $scope.map,
+        animation: google.maps.Animation.DROP,
+        position: elem
+      });
+      */
+    }
+  }
+
+  // Controller methods.
+  $scope.showRoute = function(routeId) {
+    console.log('Attempting to show route '+routeId);
+    _getRoute(routeId, _plotRoute);
+  }
 
   var options = {timeout: 10000, enableHighAccuracy: true};
 
