@@ -37,7 +37,6 @@ angular.module('starter', ['ionic', 'ngCordova'])
 })
 
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
-  console.log("Hellp");
   var options = {timeout: 10000, enableHighAccuracy: true};
 
  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
@@ -64,29 +63,54 @@ angular.module('starter', ['ionic', 'ngCordova'])
   }, function(error){
     console.log("Could not get initial location");
   });
+
   var routeArray = [];
-  setInterval( function() { $cordovaGeolocation.getCurrentPosition(options).then(function(position){
-    //Every iter push object with
 
-    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  function trackingLoop() 
+  {
+    $cordovaGeolocation.getCurrentPosition(options).then(
+      function(position)
+      {
+        var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+     
+          var marker = new google.maps.Marker({
+            map: $scope.map,
+            animation: google.maps.Animation.DROP,
+            position: latLng
+          });
 
-    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
- 
-      var marker = new google.maps.Marker({
-        map: $scope.map,
-        animation: google.maps.Animation.DROP,
-        position: latLng
-      });
+        });
+        console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
 
-    });
-    console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
+        routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
+        console.log(routeArray);
 
-    routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
-    console.log(routeArray);
+      }, 
+      function(error)
+      {
+        console.log("Could not get location");
+      }
+    )
+  }
 
-  }, function(error){
-    console.log("Could not get location");
+  //Start button
+  document.getElementById("routeButton").onclick=function() {toggleRoute()};
 
-  })}, 3000); 
+  function toggleRoute()
+  {
+    var trackingInterval;
+    console.log("Hello");
+    if (document.getElementById("routeButton").innerHTML == "Start Route")
+    {
+      document.getElementById("routeButton").innerHTML = "Stop Route";
+      trackingInterval = setInterval( function() { trackingLoop() }, 3000);
+    }
+    else
+    {
+      document.getElementById("routeButton").innerHTML = "Start Route";
+      clearInterval(trackingInterval)
+    }
+  }
 
 });
