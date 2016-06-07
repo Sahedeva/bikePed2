@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic', 'ngCordova'])
+angular.module('starter', ['ionic', 'ngCordova', 'starter-controllers'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -39,26 +39,14 @@ angular.module('starter', ['ionic', 'ngCordova'])
     url: '/newUser',
     templateUrl: 'templates/newUser.html',
     controller: 'UserCtrl'
+  })
+  .state('showRoutes', {
+    url: '/showRoutes',
+    templateUrl: 'templates/showRoutes.html',
+    controller: 'RouteCtrl'
   });
 
   $urlRouterProvider.otherwise("/newUser");
-
-})
-
-.controller('UserCtrl', function($scope, $state, $http, $location, ApiEndpoint) {
-  $scope.name = "";
-  $scope.email = "";
-  $scope.favorite = "recw";
-  $scope.newUser = function() {
-    $http.post(ApiEndpoint.url + '/new', {
-      name: $scope.name,
-      email: $scope.email,
-      favorite: $scope.favorite
-    }).success(function(data) {
-      localStorage.setItem("userid", data);
-      $location.path('/map');
-    })
-  }
 
 })
 
