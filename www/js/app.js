@@ -65,7 +65,42 @@ angular.module('starter', ['ionic', 'ngCordova'])
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $http, $location, ApiEndpoint) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
- $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+
+  //Content Form Button
+  var commentForm = document.createElement("form");
+  commentForm.id = "commentForm";
+  var commentFormInput = document.createElement("input");
+  commentFormInput.id = "commentInput";
+  commentFormInput.type = "text";
+  commentFormInput.placeholder = "Add Comment";
+  var commentFormButton = document.createElement("input");
+  commentFormButton.id = "commentButton";
+  commentFormButton.type = "submit";
+  commentFormButton.value = "Submit";
+  var commentFormCounter = document.createElement("input");
+  commentFormCounter.id = "commentCounter";
+  commentFormCounter.type = "hidden";
+
+  var commentStringArray =[];
+  var counter = 0;
+  var commentString="";
+
+  commentFormButton.onclick=function() {setComment()};
+  function setComment()
+  {
+    commentString = commentFormInput.value;
+    commentStringArray[commentFormCounter.value] = commentString;
+    commentFormInput.value = "";
+  }
+
+  commentForm.appendChild(commentFormInput);
+  commentForm.appendChild(commentFormButton);
+  commentForm.appendChild(commentFormCounter);
+
+
+
+
+  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
     var mapOptions = {
@@ -76,7 +111,6 @@ angular.module('starter', ['ionic', 'ngCordova'])
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
 
       var marker = new google.maps.Marker({
         map: $scope.map,
@@ -84,29 +118,19 @@ angular.module('starter', ['ionic', 'ngCordova'])
         position: latLng
       });
 
-      var infoWindow = new google.maps.InfoWindow({
-      content: "Here I am!"
-  });
- 
-  google.maps.event.addListener(marker, 'click', function () {
-      infoWindow.open($scope.map, marker);
-  });
-
-    });
 
   }, function(error){
     console.log("Could not get initial location");
   });
 
   var routeArray = [];
-  var counter = 0;
   function trackingLoop()
   {
     $cordovaGeolocation.getCurrentPosition(options).then(
       function(position)
       {
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+
 
           var marker = new google.maps.Marker({
             map: $scope.map,
@@ -115,19 +139,16 @@ angular.module('starter', ['ionic', 'ngCordova'])
           });
 
           var infoWindow = new google.maps.InfoWindow({
-                content: "Here I am! Marker #"+counter
-            });
-            
-            
+            content: commentForm
+          });
 
-            google.maps.event.addListener(marker, 'click', function () {
-                infoWindow.open($scope.map, marker);
-            });
+          google.maps.event.addListener(marker, 'click', function () {
+            infoWindow.open($scope.map, marker);
+          });
 
 
-        });
-        
 
+        commentFormCounter.value = counter;
         console.log(position.coords.latitude.toString() + " " + position.coords.longitude.toString());
         routeArray.push({latitude:position.coords.latitude, longitude:position.coords.longitude, comment:""});
         console.log(routeArray);
@@ -158,33 +179,39 @@ angular.module('starter', ['ionic', 'ngCordova'])
   //Start button
   document.getElementById("routeButton").onclick=function() {toggleRoute()};
   var trackingInterval;
+  var routeLength = counter+1;
   function toggleRoute()
   {
     if (document.getElementById("routeButton").innerHTML == "Start Route")
     {
       console.log("Starting interval");
       document.getElementById("routeButton").innerHTML = "Stop Route";
-      trackingInterval = setInterval( function() { trackingLoop() }, 10000);
+      trackingInterval = setInterval( function() { trackingLoop() }, 3000);
     }
-    else
+    else if (document.getElementById("routeButton").innerHTML == "Stop Route")
     {
       console.log("Stopping interval");
-      document.getElementById("routeButton").innerHTML = "Start Route";
+      document.getElementById("routeButton").innerHTML = "Update Route";
       clearInterval(trackingInterval);
+    }
+    else if (document.getElementById("routeButton").innerHTML == "Update Route")
+    {
+      for (let i=0; i<routeArray.length; i++)
+        routeArray[i]['comment'] = commentStringArray[i];
 
       var toSend={
-       userid: localStorage.getItem("userid"),
-       location: routeArray
+        userid: localStorage.getItem("userid"),
+        location: routeArray
       };
       $http.post(ApiEndpoint.url+'/route', toSend).success(function(data){
-       console.log("Success");
-       $location.path('/newUser');
+        console.log("Success");
+        $location.path('/newUser');
       }).error(function(err){
-       console.log("Error "+ err);
+        console.log("Error "+ err);
       });
 
-      routeArray = [];
     }
+
   }
 
 })
