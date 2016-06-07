@@ -24,7 +24,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
 })
 
 .constant('ApiEndpoint', {
-  url: 'https://arcane-beach-11863.herokuapp.com',
+  url: '/srv',
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
