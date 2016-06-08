@@ -44,6 +44,16 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter-controllers'])
     url: '/showRoutes',
     templateUrl: 'templates/showRoutes.html',
     controller: 'RouteCtrl'
+  })
+  .state('problemRoutes', {
+    url: '/problemRoutes',
+    templateUrl: 'templates/problemRoutes.html',
+    controller: 'problemRouteCtrl'
+  })
+  .state('rideReportShowRoutes', {
+    url: '/rideReportShowRoutes',
+    templateUrl: 'templates/rideReportShowRoutes.html',
+    controller: 'rideReportRouteCtrl'
   });
 
   $urlRouterProvider.otherwise("/newUser");
